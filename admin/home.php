@@ -26,12 +26,14 @@
     <title>EasyStock - Accueil</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-900 text-gray-100">
     <?php include("sidebar.php") ?>
 
     <main class="ml-64 flex flex-col items-center justify-center min-h-screen text-center px-4">
-    <img src="../assets/logo.svg" alt="Logo EasyStock" class="w-50 h-20 mb-6 opacity-80" />
-    <h1 class="text-4xl font-semibold text-violet-600">Bienvenue <?php echo $prenom . ' ' . $nom; ?></h1>
+        <img src="../assets/logo.svg" alt="Logo EasyStock" class="w-52 h-20 mb-6 opacity-80" />
+        <h1 class="text-4xl font-semibold text-violet-400">
+            Bienvenue <?php echo htmlspecialchars($prenom . ' ' . $nom); ?>
+        </h1>
     </main>
 </body>
 </html>

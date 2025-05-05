@@ -32,15 +32,15 @@
     <title>Fournisseurs</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-900 text-gray-100">
     <?php include("sidebar.php") ?>
 
     <main class="ml-64 p-8">
-        <h1 class="text-2xl font-semibold mb-6">Gestion des Fournisseurs</h1>
+        <h1 class="text-2xl font-semibold text-violet-400 mb-6">Gestion des Fournisseurs</h1>
 
         <!-- Formulaire d'ajout -->
         <?php if (isset($_SESSION['fournisseur_errors'])): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+            <div class="bg-red-200 border border-red-400 text-red-900 px-4 py-2 rounded mb-4">
                 <ul class="list-disc ml-5">
                     <?php foreach ($_SESSION['fournisseur_errors'] as $error): ?>
                         <li><?= htmlspecialchars($error) ?></li>
@@ -50,55 +50,59 @@
             <?php unset($_SESSION['fournisseur_errors']); ?>
         <?php endif; ?>
 
-        <form method="POST" action="add_fournisseur.php" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-lg shadow">
-            <input type="text" name="nom" placeholder="Nom" required class="border rounded px-4 py-2">
-            <input type="text" name="tel" placeholder="Téléphone" required class="border rounded px-4 py-2">
-            <input type="text" name="adresse" placeholder="Adresse" required class="border rounded px-4 py-2">
-            <input type="text" name="ville" placeholder="Ville" required class="border rounded px-4 py-2">
-            <input type="text" name="pays" placeholder="Pays" required class="border rounded px-4 py-2">
-            <input type="email" name="email" placeholder="Email" required class="border rounded px-4 py-2">
-            <button type="submit" class="col-span-1 md:col-span-2 mt-4 bg-purple-600 text-white rounded px-4 py-2 hover:bg-purple-700">Ajouter le fournisseur</button>
+        <form method="POST" action="add_fournisseur.php" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+            <input type="text" name="nom" placeholder="Nom" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <input type="text" name="tel" placeholder="Téléphone" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <input type="text" name="adresse" placeholder="Adresse" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <input type="text" name="ville" placeholder="Ville" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <input type="text" name="pays" placeholder="Pays" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <input type="email" name="email" placeholder="Email" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <button type="submit" class="col-span-1 md:col-span-2 mt-4 bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Ajouter le fournisseur</button>
         </form>
 
         <!-- Liste des fournisseurs -->
-        <div class="overflow-x-auto bg-white rounded-lg shadow">
+        <div class="overflow-x-auto bg-gray-800 rounded-lg shadow border border-gray-700">
             <table class="min-w-full text-sm">
-                <thead>
-                    <tr class="bg-gray-100 text-left">
+                <thead class="bg-gray-700 text-left text-gray-300">
+                    <tr>
                         <th class="px-4 py-2">Nom</th>
                         <th class="px-4 py-2">Téléphone</th>
                         <th class="px-4 py-2">Adresse</th>
                         <th class="px-4 py-2">Ville</th>
                         <th class="px-4 py-2">Pays</th>
                         <th class="px-4 py-2">Email</th>
-                        <th class="px-4 py-2">Action</th>
+                        <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($fournisseurs as $fournisseur): ?>
-                        <tr class="border-t">
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($fournisseur['nom']); ?></td>
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($fournisseur['tel']); ?></td>
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($fournisseur['adresse']); ?></td>
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($fournisseur['ville']); ?></td>
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($fournisseur['pays']); ?></td>
-                            <td class="px-4 py-2"><?php echo htmlspecialchars($fournisseur['email']); ?></td>
-                            <td class="px-4 py-2">
-                                <form method="POST" action="delete_fournisseur.php?page=<?php echo $page; ?>">
-                                    <input type="hidden" name="id" value="<?php echo $fournisseur['id']; ?>">
-                                    <button type="submit" class="text-red-500 hover:underline">Supprimer</button>
+                        <tr class="border-t border-gray-700 hover:bg-gray-700">
+                            <form method="POST" action="edit_fournisseur.php?page=<?= $page ?>">
+                                <input type="hidden" name="id" value="<?= $fournisseur['id'] ?>">
+                                <td class="px-4 py-2"><input type="text" name="nom" value="<?= htmlspecialchars($fournisseur['nom']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2"><input type="text" name="tel" value="<?= htmlspecialchars($fournisseur['tel']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2"><input type="text" name="adresse" value="<?= htmlspecialchars($fournisseur['adresse']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2"><input type="text" name="ville" value="<?= htmlspecialchars($fournisseur['ville']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2"><input type="text" name="pays" value="<?= htmlspecialchars($fournisseur['pays']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2"><input type="email" name="email" value="<?= htmlspecialchars($fournisseur['email']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2 flex flex-col gap-2">
+                                    <button type="submit" class="text-sm text-green-400 hover:underline">Modifier</button>
                                 </form>
-                            </td>
+                                <form method="POST" action="delete_fournisseur.php?page=<?= $page ?>">
+                                    <input type="hidden" name="id" value="<?= $fournisseur['id'] ?>">
+                                    <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
+                                </form>
+                                </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-6 flex justify-center space-x-2">
+        <div class="mt-6 flex justify-center gap-2">
             <?php for ($i = 1; $i <= $pages; $i++): ?>
-                <a href="?page=<?php echo $i; ?>" class="px-3 py-1 rounded <?php echo $i === $page ? 'bg-purple-600 text-white' : 'bg-gray-200'; ?>">
-                    <?php echo $i; ?>
+                <a href="?page=<?= $i ?>" class="px-3 py-1 rounded text-sm border <?= $i == $page ? 'bg-violet-700 text-white border-violet-700' : 'bg-gray-800 text-violet-400 border-gray-600 hover:bg-gray-700' ?>">
+                    <?= $i ?>
                 </a>
             <?php endfor; ?>
         </div>
