@@ -6,15 +6,15 @@
         
         // Fetch user details
         $user_id = $_SESSION['user_id'];
-        $query = "SELECT prenom, nom FROM user WHERE id = ?";
+        $query = "SELECT prenom, nom FROM admins WHERE id = ?";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(1, $user_id);
         $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC); // Corrected fetch method
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
         $prenom = $user['prenom'];
         $nom = $user['nom'];
     }else{
-        header("Location: ../index.php");
+        header("Location: index.php");
     }
 ?>
 

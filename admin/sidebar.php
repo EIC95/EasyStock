@@ -3,7 +3,7 @@
         session_start();
         unset($_SESSION['user_id']);
         session_destroy();
-        header("Location: ../index.php");
+        header("Location: index.php");
     }
 ?>
 
@@ -13,7 +13,7 @@
         <nav class="space-y-4 text-sm text-gray-700">
             <a href="home.php" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Acceuil</a>
             <a href="clients.php" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Gestion des clients</a>
-            <a href="/fournisseurs" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Gestion des fournisseurs</a>
+            <a href="fournisseurs.php" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Gestion des fournisseurs</a>
             <a href="/commandes" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Gestion des commandes</a>
             <a href="/stocks" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Gestion des stocks</a>
             <a href="/livraisons" class="block px-2 py-1 rounded hover:bg-violet-100 hover:text-violet-600 transition">Gestion des livraisons</a>

@@ -2,24 +2,21 @@
     $error = "";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        include 'connection.php';
+        include '../connection.php';
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
 
         try {
-            $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
+            $stmt = $conn->prepare("SELECT * FROM admins WHERE email = ?");
             $stmt->bindParam(1, $email);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && password_verify($password, $user['password'])) {                session_start();
+            if ($user && password_verify($password, $user['password'])) {                
+                session_start();
                 $_SESSION['user_id'] = $user['ID'];
-                if($user['role'] === "user"){
-                    header("Location: user/home.php");
-                }else{
-                    header("Location: admin/home.php");
-                }
+                header("Location: home.php");
             } else {
                 $error = "Email ou mot de passe incorrect";
             }
@@ -63,10 +60,6 @@
                 Se connecter
             </button>
         </form>
-        <div class="flex gap-2 mt-4 justify-center text-gray-600">
-            <p>Vous n'avez pas de compte ? </p>
-            <a href="register.php" class="text-violet-500 hover:text-violet-600">Inscrivez-vous</a>
-        </div>
     </div>
 </body>
 </html>

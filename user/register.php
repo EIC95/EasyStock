@@ -2,7 +2,7 @@
     $error = "";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        include 'connection.php';
+        include '../connection.php';
 
         $prenom = trim($_POST['prenom']);
         $nom = trim($_POST['nom']);
@@ -13,9 +13,9 @@
 
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        $photoPath = 'uploads/profile/default.svg'; 
+        $photoPath = '../uploads/profile/default.svg'; 
         if ($photo['error'] === UPLOAD_ERR_OK) {
-            $photoPath = 'uploads/profile/' . basename($photo['name']);
+            $photoPath = '../uploads/profile/' . basename($photo['name']);
             if (!move_uploaded_file($photo['tmp_name'], $photoPath)) {
                 $error = "Erreur lors du téléchargement de la photo.";
             }
@@ -23,7 +23,7 @@
 
         if (empty($error)) {
             try {
-                $checkStmt = $conn->prepare("SELECT COUNT(*) FROM user WHERE email = ? OR tel = ?");
+                $checkStmt = $conn->prepare("SELECT COUNT(*) FROM clients WHERE email = ? OR tel = ?");
                 $checkStmt->bindParam(1, $email);
                 $checkStmt->bindParam(2, $tel);
                 $checkStmt->execute();
@@ -32,14 +32,13 @@
                 if ($exists > 0) {
                     $error = "L'email ou le téléphone est déjà utilisé.";
                 } else {
-                    $stmt = $conn->prepare("INSERT INTO user (prenom, nom, email, tel, password, photo, role) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $conn->prepare("INSERT INTO clients (prenom, nom, email, tel, password, photo) VALUES (?, ?, ?, ?, ?, ?)");
                     $stmt->bindParam(1, $prenom);
                     $stmt->bindParam(2, $nom);
                     $stmt->bindParam(3, $email);
                     $stmt->bindParam(4, $tel);
                     $stmt->bindParam(5, $hashed_password);
                     $stmt->bindParam(6, $photoPath);
-                    $stmt->bindValue(7, 'user');
 
                     if ($stmt->execute()) {
                         header(("Location: index.php"));
@@ -115,7 +114,7 @@
         </form>
         <div class="flex gap-2 text-gray-600 justify-center mt-4">
             <p>Vous avez deja un compte ? </p>
-            <a href="index.php" class="text-violet-500 hover:text-violet-600">Connectez-vous</a>
+            <a href="login.php" class="text-violet-500 hover:text-violet-600">Connectez-vous</a>
         </div>
     </div>
 </body>
