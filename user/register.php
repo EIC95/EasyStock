@@ -38,7 +38,7 @@
                     $stmt->bindParam(3, $email);
                     $stmt->bindParam(4, $tel);
                     $stmt->bindParam(5, $hashed_password);
-                    $stmt->bindParam(6, $photoPath);
+                    $stmt->bindParam(6, $_FILES["photo"]['name']);
 
                     if ($stmt->execute()) {
                         header(("Location: index.php"));

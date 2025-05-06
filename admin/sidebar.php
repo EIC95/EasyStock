@@ -14,10 +14,10 @@
             <a href="home.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Acceuil</a>
             <a href="clients.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des clients</a>
             <a href="fournisseurs.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des fournisseurs</a>
-            <a href="/commandes" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des commandes</a>
-            <a href="/stocks" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des stocks</a>
-            <a href="/livraisons" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des livraisons</a>
-            <a href="/factures" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des facturations</a>
+            <a href="commandes.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des commandes</a>
+            <a href="stocks.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des stocks</a>
+            <a href="livraisons.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des livraisons</a>
+            <a href="factures.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des facturations</a>
         </nav>
     </div>
     <div class="p-6">
