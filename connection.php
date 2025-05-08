@@ -1,7 +1,7 @@
 <?php
     $servername = "localhost";
     $username = "root";
-    $password = "";
+    $password = "Cisse-2006";
     $dbname = "easystock";
 
     try {
