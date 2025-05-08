@@ -40,7 +40,7 @@
         <p class="text-red-400 my-2">
             <?php echo $error; ?>
         </p>
-        <form action="index.php" class="space-y-6" method="post">
+        <form action="/user/index.php" class="space-y-6" method="post">
             <div>
                 <label for="email" class="text-sm text-gray-400">Email</label>
                 <input type="email" name="email" id="email" placeholder="exemple@mail.com" required

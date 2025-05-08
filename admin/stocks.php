@@ -78,7 +78,7 @@
         </form>
 
         <!-- Formulaire d'ajout -->
-        <form method="POST" action="add_product.php" enctype="multipart/form-data" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+        <form method="POST" action="/admin/add_product.php" enctype="multipart/form-data" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
             <input type="text" name="nom" placeholder="Nom" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="number" name="quantite" placeholder="Quantité" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="number" step="0.01" name="prix" placeholder="Prix" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
@@ -117,7 +117,7 @@
                             <td class="px-4 py-2"><?= htmlspecialchars($produit['fournisseur_nom']) ?></td>
                             <td class="px-4 py-2 flex flex-col gap-2">
                                 <a href="product_details.php?id=<?= $produit['id'] ?>" class="text-sm text-blue-400 hover:underline">Détails</a>
-                                <form method="POST" action="delete_product.php?page=<?= $page ?>">
+                                <form method="POST" action="/admin/delete_product.php?page=<?= $page ?>">
                                     <input type="hidden" name="id" value="<?= $produit['id'] ?>">
                                     <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
                                 </form>

@@ -67,7 +67,7 @@
         <p class="text-red-400 my-2">
             <?php echo $error; ?>
         </p>
-        <form action="register.php" class="space-y-6" method="post" enctype="multipart/form-data">
+        <form action="/user/register.php" class="space-y-6" method="post" enctype="multipart/form-data">
             <div>
                 <label for="prenom" class="text-sm text-gray-400">Prénom</label>
                 <input type="text" name="prenom" id="prenom" placeholder="John" required

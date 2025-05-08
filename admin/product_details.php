@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <form method="POST" action="edit_product.php" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+        <form method="POST" action="/admin/edit_product.php" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
             <input type="hidden" name="id" value="<?= $produit['id'] ?>">
             <input type="text" name="nom" value="<?= htmlspecialchars($produit['nom']) ?>" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="number" name="quantite" value="<?= htmlspecialchars($produit['quantite']) ?>" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
@@ -69,7 +69,7 @@
             <button type="submit" class="col-span-1 md:col-span-2 mt-4 bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Modifier le produit</button>
         </form>
 
-        <form method="POST" action="delete_product.php" class="mt-6">
+        <form method="POST" action="/admin/delete_product.php" class="mt-6">
             <input type="hidden" name="id" value="<?= $produit['id'] ?>">
             <button type="submit" class="bg-red-700 text-white rounded px-4 py-2 hover:bg-red-800">Supprimer le produit</button>
         </form>

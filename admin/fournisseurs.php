@@ -50,7 +50,7 @@
             <?php unset($_SESSION['fournisseur_errors']); ?>
         <?php endif; ?>
 
-        <form method="POST" action="add_fournisseur.php" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+        <form method="POST" action="/admin/add_fournisseur.php" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
             <input type="text" name="nom" placeholder="Nom" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="text" name="tel" placeholder="Téléphone" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="text" name="adresse" placeholder="Adresse" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
@@ -77,7 +77,7 @@
                 <tbody>
                     <?php foreach ($fournisseurs as $fournisseur): ?>
                         <tr class="border-t border-gray-700 hover:bg-gray-700">
-                            <form method="POST" action="edit_fournisseur.php?page=<?= $page ?>">
+                            <form method="POST" action="/admin/edit_fournisseur.php?page=<?= $page ?>">
                                 <input type="hidden" name="id" value="<?= $fournisseur['id'] ?>">
                                 <td class="px-4 py-2"><input type="text" name="nom" value="<?= htmlspecialchars($fournisseur['nom']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
                                 <td class="px-4 py-2"><input type="text" name="tel" value="<?= htmlspecialchars($fournisseur['tel']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
@@ -88,7 +88,7 @@
                                 <td class="px-4 py-2 flex flex-col gap-2">
                                     <button type="submit" class="text-sm text-green-400 hover:underline">Modifier</button>
                                 </form>
-                                <form method="POST" action="delete_fournisseur.php?page=<?= $page ?>">
+                                <form method="POST" action="/admin/delete_fournisseur.php?page=<?= $page ?>">
                                     <input type="hidden" name="id" value="<?= $fournisseur['id'] ?>">
                                     <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
                                 </form>

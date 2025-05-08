@@ -21,7 +21,7 @@
         </nav>
     </div>
     <div class="p-6">
-        <form action="sidebar.php" method="POST">
+        <form action="/admin/sidebar.php" method="POST">
             <button type="submit" name="logout" class="w-full px-4 py-2 text-sm text-white bg-violet-600 rounded hover:bg-violet-700 transition">
                 Déconnexion
             </button>
