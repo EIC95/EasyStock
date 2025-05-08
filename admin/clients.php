@@ -1,9 +1,5 @@
 <?php 
     session_start();
-    if (!isset($_SESSION['user_id'])) {
-        header("Location: index.php");
-        exit();
-    }
 
     include("../connection.php");
 
@@ -12,11 +8,11 @@
     $page = max($page, 1);
     $offset = ($page - 1) * $limit;
 
-    $total_stmt = $conn->query("SELECT COUNT(*) FROM clients");
+    $total_stmt = $conn->query("SELECT COUNT(*) FROM users WHERE role = 'user'");
     $total_clients = (int)$total_stmt->fetchColumn();
     $total_pages = ceil($total_clients / $limit);
 
-    $stmt = $conn->prepare("SELECT id, prenom, nom, email, tel FROM clients LIMIT :limit OFFSET :offset");
+    $stmt = $conn->prepare("SELECT id, prenom, nom, login, tel, adresse FROM users WHERE role = 'user' LIMIT :limit OFFSET :offset");
     $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
@@ -45,6 +41,7 @@
                         <th class="px-4 py-2">Nom</th>
                         <th class="px-4 py-2">Email</th>
                         <th class="px-4 py-2">Téléphone</th>
+                        <th class="px-4 py-2">Adresse</th>
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -55,6 +52,7 @@
                         <td class="px-4 py-2"><?= htmlspecialchars($client['nom']) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars($client['email']) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars($client['tel']) ?></td>
+                        <td class="px-4 py-2"><?= htmlspecialchars($client['adresse']) ?></td>
                         <td class="px-4 py-2">
                             <form action="/admin/delete_client.php?page=<?= $page ?>" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
                                 <input type="hidden" name="client_id" value="<?= $client['id'] ?>">
