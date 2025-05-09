@@ -23,6 +23,7 @@
             <a href="stocks.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des stocks</a>
             <a href="livraisons.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des livraisons</a>
             <a href="factures.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des facturations</a>
+            <a href="categories.php" class="block px-2 py-1 rounded hover:bg-violet-500 hover:text-white transition">Gestion des catégories</a>
         </nav>
     </div>
     <div class="p-6">

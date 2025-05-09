@@ -2,11 +2,6 @@
 session_start();
 include '../connection.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
 $userId = $_SESSION['user_id'];
 
 // Fetch product details for items in the cart

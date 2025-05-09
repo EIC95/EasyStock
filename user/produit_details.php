@@ -2,11 +2,6 @@
 session_start();
 include '../connection.php';
 
-if (!isset($_GET['id'])) {
-    header('Location: index.php');
-    exit;
-}
-
 $productId = (int)$_GET['id'];
 $stmt = $conn->prepare("SELECT * FROM produits WHERE id = ?");
 $stmt->execute([$productId]);
