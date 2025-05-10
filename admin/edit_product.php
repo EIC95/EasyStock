@@ -10,11 +10,11 @@
         $prix = $_POST['prix'];
         $code_barre = $_POST['code_barre'];
         $description = $_POST['description'];
-        $photo = null;
+        $photo = "../uploads/produits/default.jpg";
 
         if (!empty($_FILES['photo']['name'])) {
-            $photo = time() . '_' . $_FILES['photo']['name'];
-            move_uploaded_file($_FILES['photo']['tmp_name'], "../uploads/" . $photo);
+            $photo = '../uploads/produits/' . $_FILES['photo']['name'];
+            move_uploaded_file($_FILES['photo']['tmp_name'], "../uploads/produits/" . $photo);
         }
 
         $query = "UPDATE produits SET nom = :nom, quantite = :quantite, prix = :prix, code_barre = :code_barre, description = :description";

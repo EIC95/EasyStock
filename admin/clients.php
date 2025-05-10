@@ -54,7 +54,7 @@
                         <td class="px-4 py-2"><?= htmlspecialchars($client['tel']) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars($client['adresse']) ?></td>
                         <td class="px-4 py-2">
-                            <form action="/admin/delete_client.php?page=<?= $page ?>" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
+                            <form action="delete_client.php?page=<?= $page ?>" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
                                 <input type="hidden" name="client_id" value="<?= $client['id'] ?>">
                                 <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
                             </form>

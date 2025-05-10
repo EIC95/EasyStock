@@ -10,10 +10,10 @@
         $code_barre = $_POST['code_barre'];
         $fournisseur = $_POST['fournisseur'];
         $description = $_POST['description'];
-        $photo = null;
+        $photo = "../uploads/produits/default.jpg";
 
         if (!empty($_FILES['photo']['name'])) {
-            $photo = $_FILES['photo']['name'];
+            $photo = "../uploads/produits/".$_FILES['photo']['name'];
             move_uploaded_file($_FILES['photo']['tmp_name'], "../uploads/produits/" . $photo);
         }
 

@@ -13,9 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = 'user';
 
     // Handle file upload
-    $photo = "uploads/profile/default.svg";
+    $photo = "../uploads/profile/default.svg";
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] == UPLOAD_ERR_OK) {
-        $uploadDir = 'uploads/profile/';
+        $uploadDir = '../uploads/profile/';
         $photo = basename($_FILES['photo']['name']);
         $targetFile = $uploadDir . $photo;
 

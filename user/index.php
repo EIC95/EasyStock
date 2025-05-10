@@ -1,6 +1,6 @@
 <?php
-session_start();
 include '../connection.php';
+session_start();
 
 // Pagination setup
 $itemsPerPage = 8;
@@ -67,7 +67,7 @@ $produits = $stmt->fetchAll();
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <?php foreach ($produits as $produit): ?>
                 <div class="bg-gray-800 rounded-lg p-3 shadow border border-gray-700">
-                    <img src="../<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>" class="w-full h-32 object-cover rounded mb-2">
+                    <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>" class="w-full h-32 object-cover rounded mb-2">
                     <h2 class="text-lg font-bold truncate"><?= htmlspecialchars($produit['nom']) ?></h2>
                     <p class="text-xs text-gray-400 truncate"><?= htmlspecialchars($produit['description']) ?></p>
                     <p class="mt-1 text-violet-400 font-semibold"><?= number_format($produit['prix']) ?> CFA</p>

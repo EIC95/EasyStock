@@ -1,5 +1,6 @@
 <?php
 include 'navbar.php';
+session_start();
 
 $userId = $_SESSION['user_id'];
 
@@ -16,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Handle profile picture upload
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = 'uploads/profile/';
+        $uploadDir = '../uploads/profile/';
         $fileName = basename($_FILES['photo']['name']);
         $filePath = $uploadDir . $fileName;
 
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
             <div class="flex flex-col items-center">
-                <img src="../<?= htmlspecialchars($user['photo']) ?>" alt="Photo de profil" class="w-32 h-32 rounded-full border-2 border-violet-500 mb-4">
+                <img src="<?= htmlspecialchars($user['photo']) ?>" alt="Photo de profil" class="w-32 h-32 rounded-full border-2 border-violet-500 mb-4">
                 <input type="file" name="photo" class="text-sm text-gray-400">
             </div>
             <div class="grid grid-cols-1 gap-4">

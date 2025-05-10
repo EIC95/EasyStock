@@ -11,9 +11,14 @@
     // Filter by supplier
     $filter_supplier = isset($_GET['fournisseur']) ? $_GET['fournisseur'] : '';
 
-    $query = "SELECT produits.*, fournisseurs.nom AS fournisseur_nom 
+    // Fetch categories for the category dropdown
+    $categories_stmt = $conn->query("SELECT id, name FROM categories");
+    $categories = $categories_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $query = "SELECT produits.*, fournisseurs.nom AS fournisseur_nom, categories.name AS categorie_nom 
             FROM produits 
-            LEFT JOIN fournisseurs ON produits.fournisseur = fournisseurs.id";
+            LEFT JOIN fournisseurs ON produits.fournisseur = fournisseurs.id
+            LEFT JOIN categories ON produits.categorie = categories.id";
     if ($filter_supplier) {
         $query .= " WHERE produits.fournisseur = :fournisseur";
     }
@@ -73,7 +78,7 @@
         </form>
 
         <!-- Formulaire d'ajout -->
-        <form method="POST" action="/admin/add_product.php" enctype="multipart/form-data" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+        <form method="POST" action="add_product.php" enctype="multipart/form-data" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
             <input type="text" name="nom" placeholder="Nom" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="number" name="quantite" placeholder="Quantité" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <input type="number" step="0.01" name="prix" placeholder="Prix" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
@@ -82,6 +87,12 @@
                 <option value="">Sélectionner un fournisseur</option>
                 <?php foreach ($suppliers as $supplier): ?>
                     <option value="<?= $supplier['id'] ?>"><?= htmlspecialchars($supplier['nom']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <select name="categorie" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+                <option value="">Sélectionner une catégorie</option>
+                <?php foreach ($categories as $categorie): ?>
+                    <option value="<?= $categorie['id'] ?>"><?= htmlspecialchars($categorie['name']) ?></option>
                 <?php endforeach; ?>
             </select>
             <textarea name="description" placeholder="Description" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2"></textarea>
@@ -99,6 +110,7 @@
                         <th class="px-4 py-2">Prix</th>
                         <th class="px-4 py-2">Code Barre</th>
                         <th class="px-4 py-2">Fournisseur</th>
+                        <th class="px-4 py-2">Catégorie</th>
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -110,9 +122,10 @@
                             <td class="px-4 py-2"><?= htmlspecialchars($produit['prix']) ?> CFA</td>
                             <td class="px-4 py-2"><?= htmlspecialchars($produit['code_barre']) ?></td>
                             <td class="px-4 py-2"><?= htmlspecialchars($produit['fournisseur_nom']) ?></td>
+                            <td class="px-4 py-2"><?= htmlspecialchars($produit['categorie_nom']) ?></td>
                             <td class="px-4 py-2 flex flex-col gap-2">
                                 <a href="product_details.php?id=<?= $produit['id'] ?>" class="text-sm text-blue-400 hover:underline">Détails</a>
-                                <form method="POST" action="/admin/delete_product.php?page=<?= $page ?>">
+                                <form method="POST" action="delete_product.php?page=<?= $page ?>">
                                     <input type="hidden" name="id" value="<?= $produit['id'] ?>">
                                     <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
                                 </form>

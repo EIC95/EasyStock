@@ -44,7 +44,7 @@ $pages = ceil($total / $limit);
             <?php unset($_SESSION['categorie_errors']); ?>
         <?php endif; ?>
 
-        <form method="POST" action="/admin/add_categorie.php" class="mb-8 grid grid-cols-1 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+        <form method="POST" action="add_categorie.php" class="mb-8 grid grid-cols-1 gap-4 bg-gray-800 p-6 rounded-lg shadow">
             <input type="text" name="nom" placeholder="Nom de la catégorie" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
             <button type="submit" class="mt-4 bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Ajouter la catégorie</button>
         </form>
@@ -61,13 +61,13 @@ $pages = ceil($total / $limit);
                 <tbody>
                     <?php foreach ($categories as $categorie): ?>
                         <tr class="border-t border-gray-700 hover:bg-gray-700">
-                            <form method="POST" action="/admin/edit_categorie.php?page=<?= $page ?>">
+                            <form method="POST" action="edit_categorie.php?page=<?= $page ?>">
                                 <input type="hidden" name="id" value="<?= $categorie['id'] ?>">
                                 <td class="px-4 py-2"><input type="text" name="nom" value="<?= htmlspecialchars($categorie['name']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
                                 <td class="px-4 py-2 flex flex-col gap-2">
                                     <button type="submit" class="text-sm text-green-400 hover:underline">Modifier</button>
                                 </form>
-                                <form method="POST" action="/admin/delete_categorie.php?page=<?= $page ?>">
+                                <form method="POST" action="delete_categorie.php?page=<?= $page ?>">
                                     <input type="hidden" name="id" value="<?= $categorie['id'] ?>">
                                     <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
                                 </form>

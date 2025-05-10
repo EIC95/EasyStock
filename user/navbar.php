@@ -1,5 +1,4 @@
 <?php
-session_start();
 include '../connection.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -19,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
             $stmt->execute([$_SESSION['user_id']]);
             $user = $stmt->fetch();
             if ($user) {
-                echo '<img src="../' . htmlspecialchars($user['photo']) . '" alt="Profil" class="w-8 h-8 rounded-full border-2 border-violet-500">';
+                echo '<img src="' . htmlspecialchars($user['photo']) . '" alt="Profil" class="w-8 h-8 rounded-full border-2 border-violet-500">';
             } else {
                 echo '<img src="../uploads/profile/default.svg" alt="Profil" class="w-8 h-8 rounded-full border-2 border-violet-500">';
             }
