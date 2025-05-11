@@ -21,8 +21,8 @@
 
      try {
           // Insertion dans la base de données
-          $stmt = $conn->prepare("INSERT INTO categories (name) VALUES (:name)");
-          $stmt->bindParam(':name', $nom, PDO::PARAM_STR);
+          $stmt = $conn->prepare("INSERT INTO categories (nom) VALUES (:nom)");
+          $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
           $stmt->execute();
 
           $_SESSION['success_message'] = "Catégorie ajoutée avec succès.";

@@ -63,7 +63,7 @@ $pages = ceil($total / $limit);
                         <tr class="border-t border-gray-700 hover:bg-gray-700">
                             <form method="POST" action="edit_categorie.php?page=<?= $page ?>">
                                 <input type="hidden" name="id" value="<?= $categorie['id'] ?>">
-                                <td class="px-4 py-2"><input type="text" name="nom" value="<?= htmlspecialchars($categorie['name']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
+                                <td class="px-4 py-2"><input type="text" name="nom" value="<?= htmlspecialchars($categorie['nom']) ?>" class="bg-gray-700 border border-gray-600 text-white rounded px-2 py-1 w-full"></td>
                                 <td class="px-4 py-2 flex flex-col gap-2">
                                     <button type="submit" class="text-sm text-green-400 hover:underline">Modifier</button>
                                 </form>

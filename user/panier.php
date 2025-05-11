@@ -25,21 +25,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product'])) {
 
 // Handle order validation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valider_commande'])) {
+    // Insert a new order into the commandes table
+    $stmt = $conn->prepare("INSERT INTO commandes (user_id, date_commande) VALUES (?, NOW())");
+    $stmt->execute([$userId]);
+    $commandeId = $conn->lastInsertId();
+
+    // Insert products into produits_commandes table
     $stmt = $conn->prepare("
-        INSERT INTO commandes (user_id, produit_id, quantite, prix_total) 
-        SELECT c.user_id, c.produit_id, c.quantite, (c.quantite * p.prix) 
+        INSERT INTO produits_commandes (commande_id, produit_id, quantite, prix_total) 
+        SELECT ?, c.produit_id, c.quantite, (c.quantite * p.prix) 
         FROM panier c 
         JOIN produits p ON c.produit_id = p.id 
         WHERE c.user_id = ?
     ");
-    $stmt->execute([$userId]);
+    $stmt->execute([$commandeId, $userId]);
 
+    // Clear the cart
     $stmt = $conn->prepare("DELETE FROM panier WHERE user_id = ?");
     $stmt->execute([$userId]);
 
-    header('Location: confirmation.php');
+    header('Location: panier.php');
     exit;
 }
+
+// Fetch the user's orders
+$stmt = $conn->prepare("SELECT id, date_commande FROM commandes WHERE user_id = ? ORDER BY date_commande DESC");
+$stmt->execute([$userId]);
+$commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -97,6 +109,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valider_commande'])) 
                     </div>
                 </div>
             </form>
+        <?php endif; ?>
+
+        <h2 class="text-xl text-violet-400 font-semibold mt-12 mb-4">Vos commandes</h2>
+        <?php if (empty($commandes)): ?>
+            <p class="text-gray-400">Vous n'avez pas encore passé de commande.</p>
+        <?php else: ?>
+            <div class="overflow-x-auto bg-gray-800 rounded-lg shadow border border-gray-700">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-700 text-gray-300">
+                        <tr>
+                            <th class="px-4 py-2">ID Commande</th>
+                            <th class="px-4 py-2">Date</th>
+                            <th class="px-4 py-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($commandes as $commande): ?>
+                            <tr class="border-t border-gray-700 hover:bg-gray-700">
+                                <td class="px-4 py-2"><?= htmlspecialchars($commande['id']) ?></td>
+                                <td class="px-4 py-2"><?= htmlspecialchars($commande['date_commande']) ?></td>
+                                <td class="px-4 py-2">
+                                    <a href="commande_details.php?id=<?= $commande['id'] ?>" class="text-blue-400 hover:underline">Voir les détails</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php endif; ?>
     </main>
 </body>

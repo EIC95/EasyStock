@@ -9,6 +9,7 @@
         $prix = $_POST['prix'];
         $code_barre = $_POST['code_barre'];
         $fournisseur = $_POST['fournisseur'];
+        $categorie = $_POST['categorie'];
         $description = $_POST['description'];
         $photo = "../uploads/produits/default.jpg";
 
@@ -17,13 +18,14 @@
             move_uploaded_file($_FILES['photo']['tmp_name'], "../uploads/produits/" . $photo);
         }
 
-        $stmt = $conn->prepare("INSERT INTO produits (nom, quantite, prix, code_barre, fournisseur, description, photo) 
-                                VALUES (:nom, :quantite, :prix, :code_barre, :fournisseur, :description, :photo)");
+        $stmt = $conn->prepare("INSERT INTO produits (nom, quantite, prix, code_barre, fournisseur, categorie, description, photo) 
+                                VALUES (:nom, :quantite, :prix, :code_barre, :fournisseur, :categorie, :description, :photo)");
         $stmt->bindParam(':nom', $nom);
         $stmt->bindParam(':quantite', $quantite);
         $stmt->bindParam(':prix', $prix);
         $stmt->bindParam(':code_barre', $code_barre);
         $stmt->bindParam(':fournisseur', $fournisseur);
+        $stmt->bindParam(':categorie', $categorie);
         $stmt->bindParam(':description', $description);
         $stmt->bindParam(':photo', $photo);
 
