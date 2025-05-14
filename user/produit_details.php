@@ -1,6 +1,7 @@
 <?php
-include '../connection.php';
 session_start();
+require_once "../verify.php";
+include '../connection.php';
 
 $productId = (int)$_GET['id'];
 $stmt = $conn->prepare("
@@ -32,25 +33,25 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>Détails du produit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="user-style.css">
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <?php include 'navbar.php'; ?>
 
-    <main class="p-8">
-        <div class="max-w-4xl mx-auto bg-gray-800 rounded-lg p-6 shadow border border-gray-700">
-            <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>" class="w-full h-64 object-cover rounded mb-6">
-            <h1 class="text-3xl font-bold text-violet-400 mb-4"><?= htmlspecialchars($produit['nom']) ?></h1>
-            <p class="text-gray-400 mb-4"><?= htmlspecialchars($produit['description']) ?></p>
-            <p class="text-2xl text-violet-400 font-semibold mb-6"><?= number_format($produit['prix']) ?> CFA</p>
-            <p class="text-gray-400 mb-4"><strong>Catégorie:</strong> <?= htmlspecialchars($produit['categorie']) ?></p>
-            <form action="ajouter_panier.php" method="POST" class="mb-4">
+    <main class="main-content">
+        <div class="product-details">
+            <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>" class="product-image">
+            <h1 class="product-title"><?= htmlspecialchars($produit['nom']) ?></h1>
+            <p class="product-description"><?= htmlspecialchars($produit['description']) ?></p>
+            <p class="product-price"><?= number_format($produit['prix']) ?> CFA</p>
+            <p class="product-category"><strong>Catégorie:</strong> <?= htmlspecialchars($produit['categorie']) ?></p>
+            <form action="ajouter_panier.php" method="POST" class="add-to-cart-form">
                 <input type="hidden" name="produit_id" value="<?= $produit['id'] ?>">
-                <button type="submit" class="bg-violet-600 hover:bg-violet-700 px-6 py-3 rounded" <?= $isInCart ? 'disabled' : '' ?>>
+                <button type="submit" class="add-to-cart-button" <?= $isInCart ? 'disabled' : '' ?>>
                     <?= $isInCart ? 'Déjà dans le panier' : 'Ajouter au panier' ?>
                 </button>
             </form>
-            <a href="index.php" class="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded inline-block">Retour</a>
+            <a href="index.php" class="back-button">Retour</a>
         </div>
     </main>
 </body>

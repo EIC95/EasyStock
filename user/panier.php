@@ -1,6 +1,7 @@
 <?php
-include '../connection.php';
 session_start();
+require_once "../verify.php";
+include '../connection.php';
 
 $userId = $_SESSION['user_id'];
 
@@ -59,78 +60,76 @@ $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Panier</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="user-style.css">
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <?php include 'navbar.php'; ?>
 
-    <main class="p-8">
-        <h1 class="text-2xl text-violet-400 font-semibold mb-6">Votre panier</h1>
+    <main class="main-content">
+        <h1 class="page-title">Votre panier</h1>
 
         <?php if (empty($produits)): ?>
-            <p class="text-gray-400">Votre panier est vide.</p>
+            <p class="empty-message">Votre panier est vide.</p>
         <?php else: ?>
-            <form method="POST">
-                <table class="w-full text-left bg-gray-800 rounded-lg shadow border border-gray-700">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-2">Produit</th>
-                            <th class="px-4 py-2">Prix</th>
-                            <th class="px-4 py-2">Quantité</th>
-                            <th class="px-4 py-2">Disponible</th>
-                            <th class="px-4 py-2">Total</th>
-                            <th class="px-4 py-2">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($produits as $produit): ?>
+            <form class="cart-form" method="POST">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td class="px-4 py-2"><?= htmlspecialchars($produit['nom']) ?></td>
-                                <td class="px-4 py-2"><?= number_format($produit['prix'], 2) ?> CFA</td>
-                                <td class="px-4 py-2">
-                                    <input type="number" name="quantite[<?= $produit['id'] ?>]" value="<?= $produit['quantite'] ?>" min="1" max="<?= $produit['disponible'] ?>" class="w-16 bg-gray-700 text-white rounded">
-                                </td>
-                                <td class="px-4 py-2"><?= htmlspecialchars($produit['disponible']) ?></td>
-                                <td class="px-4 py-2"><?= number_format($produit['prix'] * $produit['quantite'], 2) ?> CFA</td>
-                                <td class="px-4 py-2">
-                                    <form method="POST" class="inline">
-                                        <input type="hidden" name="produit_id" value="<?= $produit['id'] ?>">
-                                        <button type="submit" name="delete_product" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white">Supprimer</button>
-                                    </form>
-                                </td>
+                                <th>Produit</th>
+                                <th>Prix</th>
+                                <th>Quantité</th>
+                                <th>Disponible</th>
+                                <th>Total</th>
+                                <th>Action</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <div class="mt-6 flex justify-between">
-                    <a href="index.php" class="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded">Retour à l'accueil</a>
-                    <div class="flex gap-4">
-                        <button type="submit" name="valider_commande" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded">Valider la commande</button>
-                    </div>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($produits as $produit): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($produit['nom']) ?></td>
+                                    <td><?= number_format($produit['prix'], 2) ?> CFA</td>
+                                    <td>
+                                        <input type="number" name="quantite[<?= $produit['id'] ?>]" value="<?= $produit['quantite'] ?>" min="1" max="<?= $produit['disponible'] ?>" class="input-number">
+                                    </td>
+                                    <td><?= htmlspecialchars($produit['disponible']) ?></td>
+                                    <td><?= number_format($produit['prix'] * $produit['quantite'], 2) ?> CFA</td>
+                                    <td>
+                                        <input type="hidden" name="produit_id" value="<?= $produit['id'] ?>">
+                                        <button type="submit" name="delete_product" class="delete-button">Supprimer</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="actions">
+                    <a href="index.php" class="back-button">Retour à l'accueil</a>
+                    <button type="submit" name="valider_commande" class="validate-button">Valider la commande</button>
                 </div>
             </form>
         <?php endif; ?>
 
-        <h2 class="text-xl text-violet-400 font-semibold mt-12 mb-4">Vos commandes</h2>
+        <h2 class="section-title">Vos commandes</h2>
         <?php if (empty($commandes)): ?>
-            <p class="text-gray-400">Vous n'avez pas encore passé de commande.</p>
+            <p class="empty-message">Vous n'avez pas encore passé de commande.</p>
         <?php else: ?>
-            <div class="overflow-x-auto bg-gray-800 rounded-lg shadow border border-gray-700">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-700 text-gray-300">
+            <div class="table-container">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th class="px-4 py-2">ID Commande</th>
-                            <th class="px-4 py-2">Date</th>
-                            <th class="px-4 py-2">Action</th>
+                            <th>ID Commande</th>
+                            <th>Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($commandes as $commande): ?>
-                            <tr class="border-t border-gray-700 hover:bg-gray-700">
-                                <td class="px-4 py-2"><?= htmlspecialchars($commande['id']) ?></td>
-                                <td class="px-4 py-2"><?= htmlspecialchars($commande['date_commande']) ?></td>
-                                <td class="px-4 py-2">
-                                    <a href="commande_details.php?id=<?= $commande['id'] ?>" class="text-blue-400 hover:underline">Voir les détails</a>
+                            <tr>
+                                <td><?= htmlspecialchars($commande['id']) ?></td>
+                                <td><?= htmlspecialchars($commande['date_commande']) ?></td>
+                                <td>
+                                    <a href="commande_details.php?id=<?= $commande['id'] ?>" class="details-link">Voir les détails</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

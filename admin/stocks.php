@@ -12,10 +12,10 @@
     $filter_supplier = isset($_GET['fournisseur']) ? $_GET['fournisseur'] : '';
 
     // Fetch categories for the category dropdown
-    $categories_stmt = $conn->query("SELECT id, name FROM categories");
+    $categories_stmt = $conn->query("SELECT id, nom FROM categories");
     $categories = $categories_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $query = "SELECT produits.*, fournisseurs.nom AS fournisseur_nom, categories.name AS categorie_nom 
+    $query = "SELECT produits.*, fournisseurs.nom AS fournisseur_nom, categories.nom AS categorie_nom 
             FROM produits 
             LEFT JOIN fournisseurs ON produits.fournisseur = fournisseurs.id
             LEFT JOIN categories ON produits.categorie = categories.id";

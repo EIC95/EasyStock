@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once "../verify.php";
+
 include '../connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

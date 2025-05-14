@@ -39,7 +39,7 @@
                     <tr>
                         <th class="px-4 py-2">Prénom</th>
                         <th class="px-4 py-2">Nom</th>
-                        <th class="px-4 py-2">Email</th>
+                        <th class="px-4 py-2">login</th>
                         <th class="px-4 py-2">Téléphone</th>
                         <th class="px-4 py-2">Adresse</th>
                         <th class="px-4 py-2">Actions</th>
@@ -50,7 +50,7 @@
                     <tr class="border-t border-gray-700 hover:bg-gray-700">
                         <td class="px-4 py-2"><?= htmlspecialchars($client['prenom']) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars($client['nom']) ?></td>
-                        <td class="px-4 py-2"><?= htmlspecialchars($client['email']) ?></td>
+                        <td class="px-4 py-2"><?= htmlspecialchars($client['login']) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars($client['tel']) ?></td>
                         <td class="px-4 py-2"><?= htmlspecialchars($client['adresse']) ?></td>
                         <td class="px-4 py-2">

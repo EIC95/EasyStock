@@ -1,6 +1,7 @@
 <?php
-include 'navbar.php';
 session_start();
+require_once "../verify.php";
+include 'navbar.php';
 
 $userId = $_SESSION['user_id'];
 
@@ -11,7 +12,9 @@ $user = $stmt->fetch();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'] ?? $user['nom'];
+    $prenom = $_POST['prenom'] ?? $user['prenom'];
     $tel = $_POST['tel'] ?? $user['tel'];
+    $adresse = $_POST['adresse'] ?? $user['adresse'];
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
@@ -31,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Update user details
-    $stmt = $conn->prepare("UPDATE users SET nom = ?, tel = ?, photo = ? WHERE id = ?");
-    $stmt->execute([$nom, $tel, $photo, $userId]);
+    $stmt = $conn->prepare("UPDATE users SET nom = ?, prenom = ?, tel = ?, adresse = ?, photo = ? WHERE id = ?");
+    $stmt->execute([$nom, $prenom, $tel, $adresse, $photo, $userId]);
 
     // Update password if provided and matches confirmation
     if (!empty($password) && $password === $confirmPassword) {
@@ -51,23 +54,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Profil</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="user-style.css">
 </head>
-<body class="bg-gray-900 text-white">
-    <main class="p-8">
-        <h1 class="text-2xl text-violet-400 font-semibold mb-6">Mon Profil</h1>
+<body>
+    <main class="main-content">
+        <h1 class="page-title">Mon Profil</h1>
 
-        <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
-            <div class="flex flex-col items-center">
-                <img src="<?= htmlspecialchars($user['photo']) ?>" alt="Photo de profil" class="w-32 h-32 rounded-full border-2 border-violet-500 mb-4">
-                <input type="file" name="photo" class="text-sm text-gray-400">
+        <form method="POST" enctype="multipart/form-data" class="profile-form">
+            <div class="profile-picture-section">
+                <img src="<?= htmlspecialchars($user['photo']) ?>" alt="Photo de profil" class="profile-picture">
+                <input type="file" name="photo" class="file-input">
             </div>
-            <div class="grid grid-cols-1 gap-4">
-                <input type="text" name="nom" value="<?= htmlspecialchars($user['nom']) ?>" placeholder="Nom" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-                <input type="text" name="tel" value="<?= htmlspecialchars($user['tel']) ?>" placeholder="Téléphone" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-                <input type="password" name="password" placeholder="Nouveau mot de passe" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-                <input type="password" name="confirm_password" placeholder="Confirmer le mot de passe" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-                <button type="submit" class="mt-4 bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Mettre à jour</button>
+            <div class="profile-details-section">
+                <input type="text" name="nom" value="<?= htmlspecialchars($user['nom']) ?>" placeholder="Nom" required class="input-field">
+                <input type="text" name="prenom" value="<?= htmlspecialchars($user['prenom']) ?>" placeholder="Prénom" required class="input-field">
+                <input type="text" name="tel" value="<?= htmlspecialchars($user['tel']) ?>" placeholder="Téléphone" required class="input-field">
+                <input type="text" name="adresse" value="<?= htmlspecialchars($user['adresse']) ?>" placeholder="Adresse" required class="input-field">
+                <input type="password" name="password" placeholder="Nouveau mot de passe" class="input-field">
+                <input type="password" name="confirm_password" placeholder="Confirmer le mot de passe" class="input-field">
+                <button type="submit" class="submit-button">Mettre à jour</button>
             </div>
         </form>
     </main>

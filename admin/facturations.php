@@ -7,11 +7,12 @@ $limit = 10;
 $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
 $offset = ($page - 1) * $limit;
 
-// Fetch orders
+// Fetch orders in "Livrée"
 $stmt = $conn->prepare("
-    SELECT c.id, c.date_commande, c.etat, u.nom AS user_nom, u.prenom AS user_prenom, u.login AS user_login 
+    SELECT c.id, c.date_commande, u.nom AS user_nom, u.prenom AS user_prenom, u.login AS user_login 
     FROM commandes c
     JOIN users u ON c.user_id = u.id
+    WHERE c.etat = 'Livrée'
     ORDER BY c.date_commande DESC
     LIMIT :limit OFFSET :offset
 ");
@@ -20,8 +21,8 @@ $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Get total number of orders
-$total_stmt = $conn->query("SELECT COUNT(*) FROM commandes");
+// Get total number of orders in this state
+$total_stmt = $conn->query("SELECT COUNT(*) FROM commandes WHERE etat = 'Livrée'");
 $total = $total_stmt->fetchColumn();
 $pages = ceil($total / $limit);
 ?>
@@ -31,16 +32,14 @@ $pages = ceil($total / $limit);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commandes</title>
+    <title>Facturations</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-gray-100">
     <?php include("sidebar.php") ?>
 
     <main class="ml-64 p-8">
-        <h1 class="text-2xl font-semibold text-violet-400 mb-6">Gestion des Commandes</h1>
-
-        <!-- Liste des commandes -->
+        <h1 class="text-2xl font-semibold text-violet-400 mb-6">Commandes Livrées (Facturation)</h1>
         <div class="overflow-x-auto bg-gray-800 rounded-lg shadow border border-gray-700">
             <table class="min-w-full text-sm">
                 <thead class="bg-gray-700 text-left text-gray-300">
@@ -59,16 +58,14 @@ $pages = ceil($total / $limit);
                             <td class="px-4 py-2"><?= htmlspecialchars($commande['date_commande']) ?></td>
                             <td class="px-4 py-2"><?php echo htmlspecialchars($commande['user_prenom']) . " " . htmlspecialchars($commande['user_nom']); ?></td>
                             <td class="px-4 py-2"><?= htmlspecialchars($commande['user_login']) ?></td>
-                            <td class="px-4 py-2"><?= htmlspecialchars($commande['etat']) ?></td>
                             <td class="px-4 py-2">
-                                <a href="commande_details.php?id=<?= $commande['id'] ?>" class="text-blue-400 hover:underline">Voir les détails</a>
+                                <a href="facture.php?id=<?= $commande['id'] ?>" target="_blank" class="text-blue-400 hover:underline">Générer la facture</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-
         <div class="mt-6 flex justify-center gap-2">
             <?php for ($i = 1; $i <= $pages; $i++): ?>
                 <a href="?page=<?= $i ?>" class="px-3 py-1 rounded text-sm border <?= $i == $page ? 'bg-violet-700 text-white border-violet-700' : 'bg-gray-800 text-violet-400 border-gray-600 hover:bg-gray-700' ?>">
