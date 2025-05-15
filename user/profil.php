@@ -1,11 +1,11 @@
 <?php
-session_start();
-require_once "../verify.php";
+include ("../verify.php");
+
 include 'navbar.php';
 
 $userId = $_SESSION['user_id'];
 
-// Fetch user details
+
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
-    // Handle profile picture upload
+    
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = '../uploads/profile/';
         $fileName = basename($_FILES['photo']['name']);
@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $photo = $user['photo'];
     }
 
-    // Update user details
+    
     $stmt = $conn->prepare("UPDATE users SET nom = ?, prenom = ?, tel = ?, adresse = ?, photo = ? WHERE id = ?");
     $stmt->execute([$nom, $prenom, $tel, $adresse, $photo, $userId]);
 
-    // Update password if provided and matches confirmation
+    
     if (!empty($password) && $password === $confirmPassword) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Profil</title>
-    <link rel="stylesheet" href="user-style.css">
+    <link rel="stylesheet" href="userStyle.css">
 </head>
 <body>
     <main class="main-content">

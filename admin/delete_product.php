@@ -1,7 +1,5 @@
 <?php
-    session_start();
-
-    include("../connection.php");
+    include ("../verify.php");    
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['id'];

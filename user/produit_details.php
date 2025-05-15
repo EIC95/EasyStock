@@ -1,7 +1,7 @@
 <?php
-session_start();
-require_once "../verify.php";
-include '../connection.php';
+
+include ("../verify.php");
+
 
 $productId = (int)$_GET['id'];
 $stmt = $conn->prepare("
@@ -18,7 +18,7 @@ if (!$produit) {
     exit;
 }
 
-// Check if the product is already in the cart from the database
+
 $isInCart = false;
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
@@ -33,7 +33,7 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>Détails du produit</title>
-    <link rel="stylesheet" href="user-style.css">
+    <link rel="stylesheet" href="userStyle.css">
 </head>
 <body>
     <?php include 'navbar.php'; ?>

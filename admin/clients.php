@@ -1,18 +1,31 @@
 <?php 
-    session_start();
+    
+    include ("../verify.php");
+    
 
-    include("../connection.php");
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
     $limit = 10;
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
     $page = max($page, 1);
     $offset = ($page - 1) * $limit;
 
-    $total_stmt = $conn->query("SELECT COUNT(*) FROM users WHERE role = 'user'");
+    $where = "WHERE role = 'user'";
+    $params = [];
+
+    if ($search !== '') {
+        $where .= " AND (prenom LIKE :search OR nom LIKE :search OR login LIKE :search)";
+        $params[':search'] = "%$search%";
+    }
+
+    $total_stmt = $conn->prepare("SELECT COUNT(*) FROM users $where");
+    foreach ($params as $k => $v) $total_stmt->bindValue($k, $v);
+    $total_stmt->execute();
     $total_clients = (int)$total_stmt->fetchColumn();
     $total_pages = ceil($total_clients / $limit);
 
-    $stmt = $conn->prepare("SELECT id, prenom, nom, login, tel, adresse FROM users WHERE role = 'user' LIMIT :limit OFFSET :offset");
+    $stmt = $conn->prepare("SELECT id, prenom, nom, login, tel, adresse FROM users $where LIMIT :limit OFFSET :offset");
+    foreach ($params as $k => $v) $stmt->bindValue($k, $v);
     $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
@@ -25,38 +38,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EasyStock - Clients</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="adminStyle.css">
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body>
     <?php include("sidebar.php") ?>
 
-    <main class="ml-64 px-6 py-10">
-        <h1 class="text-2xl font-semibold text-violet-400 mb-6">Liste des clients</h1>
+    <main class="main-container">
+        <h1 class="page-title">Liste des clients</h1>
 
-        <div class="overflow-x-auto rounded border border-gray-700 bg-gray-800 shadow-sm">
-            <table class="min-w-full text-sm">
-                <thead class="bg-gray-700 text-left text-gray-300">
+        <form method="get" class="mb-4">
+            <input type="text" name="search" placeholder="Recherche prénom, nom ou login" value="<?= htmlspecialchars($search) ?>" class="input" />
+            <button type="submit" class="btn-primary">Rechercher</button>
+        </form>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th class="px-4 py-2">Prénom</th>
-                        <th class="px-4 py-2">Nom</th>
-                        <th class="px-4 py-2">login</th>
-                        <th class="px-4 py-2">Téléphone</th>
-                        <th class="px-4 py-2">Adresse</th>
-                        <th class="px-4 py-2">Actions</th>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>login</th>
+                        <th>Téléphone</th>
+                        <th>Adresse</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach($clients as $client): ?>
-                    <tr class="border-t border-gray-700 hover:bg-gray-700">
-                        <td class="px-4 py-2"><?= htmlspecialchars($client['prenom']) ?></td>
-                        <td class="px-4 py-2"><?= htmlspecialchars($client['nom']) ?></td>
-                        <td class="px-4 py-2"><?= htmlspecialchars($client['login']) ?></td>
-                        <td class="px-4 py-2"><?= htmlspecialchars($client['tel']) ?></td>
-                        <td class="px-4 py-2"><?= htmlspecialchars($client['adresse']) ?></td>
-                        <td class="px-4 py-2">
-                            <form action="delete_client.php?page=<?= $page ?>" method="POST" onsubmit="return confirm('Confirmer la suppression ?');">
+                    <tr>
+                        <td><?= htmlspecialchars($client['prenom']) ?></td>
+                        <td><?= htmlspecialchars($client['nom']) ?></td>
+                        <td><?= htmlspecialchars($client['login']) ?></td>
+                        <td><?= htmlspecialchars($client['tel']) ?></td>
+                        <td><?= htmlspecialchars($client['adresse']) ?></td>
+                        <td>
+                            <form action="delete_client.php?page=<?= $page ?>" method="POST" onsubmit="return confirm('Confirmer la suppression ?');" class="form-inline">
                                 <input type="hidden" name="client_id" value="<?= $client['id'] ?>">
-                                <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
+                                <button type="submit" class="link-delete">Supprimer</button>
                             </form>
                         </td>
                     </tr>
@@ -65,15 +83,9 @@
             </table>
         </div>
 
-        <div class="mt-6 flex justify-center gap-2">
+        <div class="pagination">
             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <a href="?page=<?= $i ?>"
-                    class="px-3 py-1 rounded text-sm border
-                        <?= $i == $page 
-                            ? 'bg-violet-700 text-white border-violet-700' 
-                            : 'bg-gray-800 text-violet-400 border-gray-600 hover:bg-gray-700' 
-                        ?>"
-                >
+                <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>" class="pagination-link <?= $i == $page ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>

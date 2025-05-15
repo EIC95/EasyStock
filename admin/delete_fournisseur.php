@@ -1,7 +1,7 @@
 <?php
-    session_start();
-
-    include("../connection.php");
+    
+    include ("../verify.php");
+    
 
     $id = $_POST['id'] ?? null;
     $page = $_GET['page'] ?? 1;

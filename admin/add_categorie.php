@@ -1,12 +1,12 @@
 <?php
-     session_start();
-     include("../connection.php");
+     
+     include ("../verify.php");
 
      if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      $nom = trim($_POST['nom']);
      $errors = [];
 
-     // Validation
+     
      if (empty($nom)) {
           $errors[] = "Le nom de la catégorie est requis.";
      } elseif (strlen($nom) > 255) {
@@ -20,7 +20,7 @@
      }
 
      try {
-          // Insertion dans la base de données
+          
           $stmt = $conn->prepare("INSERT INTO categories (nom) VALUES (:nom)");
           $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
           $stmt->execute();

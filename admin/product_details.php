@@ -1,7 +1,5 @@
 <?php
-    session_start();
-
-    include("../connection.php");
+    include ("../verify.php");
 
     if (!isset($_GET['id'])) {
         header("Location: stocks.php");
@@ -21,6 +19,12 @@
         header("Location: stocks.php");
         exit();
     }
+
+    // Récupérer les catégories depuis la table categories
+    $categories = $conn->query("SELECT nom FROM categories")->fetchAll(PDO::FETCH_COLUMN);
+
+    // Récupérer les fournisseurs depuis la table fournisseurs
+    $fournisseurs = $conn->query("SELECT id, nom FROM fournisseurs")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -29,44 +33,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du Produit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="adminStyle.css">
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body>
     <?php include("sidebar.php") ?>
 
-    <main class="ml-64 p-8">
-        <h1 class="text-2xl font-semibold text-violet-400 mb-6">Détails du Produit</h1>
+    <main class="main-container">
+        <h1 class="page-title">Détails du Produit</h1>
 
-        <a href="stocks.php" class="text-sm text-blue-400 hover:underline mb-4 inline-block">← Retour à la liste des produits</a>
+        <a href="stocks.php" class="link-details mb-4">← Retour à la liste des produits</a>
 
-        <div class="bg-gray-800 p-6 rounded-lg shadow mb-6 flex justify-evenly">
+        <div class="product-details-container">
             <?php if ($produit['photo']): ?>
-                <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="Photo du produit" class="mt-4 max-w-xs">
+                <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="Photo du produit" class="product-photo">
             <?php endif; ?>
             <div>
-                <h2 class="text-xl font-semibold mb-4"><?= htmlspecialchars($produit['nom']) ?></h2>
+                <h2 class="product-title"><?= htmlspecialchars($produit['nom']) ?></h2>
                 <p><strong>Quantité :</strong> <?= htmlspecialchars($produit['quantite']) ?></p>
                 <p><strong>Prix :</strong> <?= htmlspecialchars($produit['prix']) ?> CFA</p>
                 <p><strong>Code Barre :</strong> <?= htmlspecialchars($produit['code_barre']) ?></p>
                 <p><strong>Fournisseur :</strong> <?= htmlspecialchars($produit['fournisseur_nom']) ?></p>
                 <p><strong>Description :</strong> <?= htmlspecialchars($produit['description']) ?></p>
+                <p><strong>Categorie :</strong> <?= htmlspecialchars($produit['categorie']) ?></p>
             </div>
         </div>
 
-        <form method="POST" action="edit_product.php" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
+        <form method="POST" action="edit_product.php" enctype="multipart/form-data" class="form-add-product">
             <input type="hidden" name="id" value="<?= $produit['id'] ?>">
-            <input type="text" name="nom" value="<?= htmlspecialchars($produit['nom']) ?>" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <input type="number" name="quantite" value="<?= htmlspecialchars($produit['quantite']) ?>" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <input type="number" step="0.01" name="prix" value="<?= htmlspecialchars($produit['prix']) ?>" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <input type="text" name="code_barre" value="<?= htmlspecialchars($produit['code_barre']) ?>" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <textarea name="description" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2"><?= htmlspecialchars($produit['description']) ?></textarea>
-            <input type="file" name="photo" accept="image/*" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <button type="submit" class="col-span-1 md:col-span-2 mt-4 bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Modifier le produit</button>
+            <input type="text" name="nom" value="<?= htmlspecialchars($produit['nom']) ?>" required class="input">
+            <input type="number" name="quantite" value="<?= htmlspecialchars($produit['quantite']) ?>" required class="input">
+            <input type="number" step="0.01" name="prix" value="<?= htmlspecialchars($produit['prix']) ?>" required class="input">
+            <input type="text" name="code_barre" value="<?= htmlspecialchars($produit['code_barre']) ?>" required class="input">
+            <select name="categorie" class="input" required>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= htmlspecialchars($cat) ?>" <?= $produit['categorie'] == $cat ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($cat) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <select name="fournisseur" class="input" required>
+                <?php foreach ($fournisseurs as $f): ?>
+                    <option value="<?= $f['nom'] ?>" <?= $produit['fournisseur'] == $f['nom'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($f['nom']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <textarea name="description" class="textarea"><?= htmlspecialchars($produit['description']) ?></textarea>
+            <input type="file" name="photo" accept="image/*" class="input-file">
+            <button type="submit" class="btn-primary btn-block">Modifier le produit</button>
         </form>
 
         <form method="POST" action="delete_product.php" class="mt-6">
             <input type="hidden" name="id" value="<?= $produit['id'] ?>">
-            <button type="submit" class="bg-red-700 text-white rounded px-4 py-2 hover:bg-red-800">Supprimer le produit</button>
+            <button type="submit" class="btn-danger">Supprimer le produit</button>
         </form>
     </main>
 </body>

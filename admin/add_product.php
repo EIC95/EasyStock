@@ -1,7 +1,7 @@
 <?php
-    session_start();
-
-    include("../connection.php");
+    
+    include ("../verify.php");
+    
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nom = $_POST['nom'];
@@ -14,8 +14,16 @@
         $photo = "../uploads/produits/default.jpg";
 
         if (!empty($_FILES['photo']['name'])) {
-            $photo = "../uploads/produits/".$_FILES['photo']['name'];
-            move_uploaded_file($_FILES['photo']['tmp_name'], "../uploads/produits/" . $photo);
+            $uploadDir = "../uploads/produits/";
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $extension = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+            $filename = uniqid('prod_', true) . '.' . $extension;
+            $photoPath = $uploadDir . $filename;
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $photoPath)) {
+                $photo = $photoPath;
+            }
         }
 
         $stmt = $conn->prepare("INSERT INTO produits (nom, quantite, prix, code_barre, fournisseur, categorie, description, photo) 

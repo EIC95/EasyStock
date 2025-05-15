@@ -1,53 +1,53 @@
 <?php
-    session_start();
-
-    include("../connection.php");
-
-    // Pagination
+    
+    include ("../verify.php");
+    
     $limit = 10;
     $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
     $offset = ($page - 1) * $limit;
 
-    // Filter by supplier
-    $filter_supplier = isset($_GET['fournisseur']) ? $_GET['fournisseur'] : '';
+    $filter_supplier = isset($_GET['fournisseur']) ? trim($_GET['fournisseur']) : '';
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-    // Fetch categories for the category dropdown
-    $categories_stmt = $conn->query("SELECT id, nom FROM categories");
-    $categories = $categories_stmt->fetchAll(PDO::FETCH_ASSOC);
+    $categories_stmt = $conn->query("SELECT nom FROM categories");
+    $categories = $categories_stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    $query = "SELECT produits.*, fournisseurs.nom AS fournisseur_nom, categories.nom AS categorie_nom 
-            FROM produits 
-            LEFT JOIN fournisseurs ON produits.fournisseur = fournisseurs.id
-            LEFT JOIN categories ON produits.categorie = categories.id";
-    if ($filter_supplier) {
-        $query .= " WHERE produits.fournisseur = :fournisseur";
+    $suppliers_stmt = $conn->query("SELECT nom FROM fournisseurs");
+    $suppliers = $suppliers_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    $where = [];
+    $params = [];
+
+    if ($filter_supplier !== '') {
+        $where[] = "fournisseur = :fournisseur_nom";
+        $params[':fournisseur_nom'] = $filter_supplier;
     }
-    $query .= " ORDER BY produits.id DESC LIMIT :limit OFFSET :offset";
+    if ($search !== '') {
+        $where[] = "(nom LIKE :search OR code_barre LIKE :search OR description LIKE :search)";
+        $params[':search'] = "%$search%";
+    }
+
+    $where_sql = count($where) ? "WHERE " . implode(' AND ', $where) : "";
+
+    $query = "SELECT * FROM produits $where_sql ORDER BY id DESC LIMIT :limit OFFSET :offset";
 
     $stmt = $conn->prepare($query);
-    if ($filter_supplier) {
-        $stmt->bindParam(':fournisseur', $filter_supplier, PDO::PARAM_INT);
+    foreach ($params as $k => $v) {
+        $stmt->bindValue($k, $v);
     }
-    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
     $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $total_query = "SELECT COUNT(*) FROM produits";
-    if ($filter_supplier) {
-        $total_query .= " WHERE fournisseur = :fournisseur";
-    }
+    $total_query = "SELECT COUNT(*) FROM produits $where_sql";
     $total_stmt = $conn->prepare($total_query);
-    if ($filter_supplier) {
-        $total_stmt->bindParam(':fournisseur', $filter_supplier, PDO::PARAM_INT);
+    foreach ($params as $k => $v) {
+        $total_stmt->bindValue($k, $v);
     }
     $total_stmt->execute();
     $total = $total_stmt->fetchColumn();
     $pages = ceil($total / $limit);
-
-    // Fetch suppliers for the filter dropdown
-    $suppliers_stmt = $conn->query("SELECT id, nom FROM fournisseurs");
-    $suppliers = $suppliers_stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -56,78 +56,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stocks</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="adminStyle.css">
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body>
     <?php include("sidebar.php") ?>
 
-    <main class="ml-64 p-8">
-        <h1 class="text-2xl font-semibold text-violet-400 mb-6">Gestion des Stocks</h1>
+    <main class="main-container">
+        <h1 class="page-title">Gestion des Stocks</h1>
 
-        <!-- Filter by supplier -->
-        <form method="GET" class="mb-4">
-            <select name="fournisseur" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+        <form method="GET" class="form-filter">
+            <select name="fournisseur" class="select">
                 <option value="">Tous les fournisseurs</option>
                 <?php foreach ($suppliers as $supplier): ?>
-                    <option value="<?= $supplier['id'] ?>" <?= $filter_supplier == $supplier['id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($supplier['nom']) ?>
+                    <option value="<?= htmlspecialchars($supplier) ?>" <?= $filter_supplier == $supplier ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($supplier) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Filtrer</button>
+            <input type="text" name="search" placeholder="Recherche produit, code barre ou description" value="<?= htmlspecialchars($search) ?>" class="input" />
+            <button type="submit" class="btn-primary">Filtrer / Rechercher</button>
         </form>
 
-        <!-- Formulaire d'ajout -->
-        <form method="POST" action="add_product.php" enctype="multipart/form-data" class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-800 p-6 rounded-lg shadow">
-            <input type="text" name="nom" placeholder="Nom" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <input type="number" name="quantite" placeholder="Quantité" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <input type="number" step="0.01" name="prix" placeholder="Prix" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <input type="text" name="code_barre" placeholder="Code Barre" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <select name="fournisseur" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+        <form method="POST" action="add_product.php" enctype="multipart/form-data" class="form-add-product">
+            <input type="text" name="nom" placeholder="Nom" required class="input">
+            <input type="number" name="quantite" placeholder="Quantité" required class="input">
+            <input type="number" step="0.01" name="prix" placeholder="Prix" required class="input">
+            <input type="text" name="code_barre" placeholder="Code Barre" required class="input">
+            <select name="fournisseur" required class="select">
                 <option value="">Sélectionner un fournisseur</option>
                 <?php foreach ($suppliers as $supplier): ?>
-                    <option value="<?= $supplier['id'] ?>"><?= htmlspecialchars($supplier['nom']) ?></option>
+                    <option value="<?= htmlspecialchars($supplier) ?>"><?= htmlspecialchars($supplier) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select name="categorie" required class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
+            <select name="categorie" required class="select">
                 <option value="">Sélectionner une catégorie</option>
                 <?php foreach ($categories as $categorie): ?>
-                    <option value="<?= $categorie['id'] ?>"><?= htmlspecialchars($categorie['name']) ?></option>
+                    <option value="<?= htmlspecialchars($categorie) ?>"><?= htmlspecialchars($categorie) ?></option>
                 <?php endforeach; ?>
             </select>
-            <textarea name="description" placeholder="Description" class="bg-gray-700 border border-gray-600 text-white rounded px-4 py-2"></textarea>
-            <input type="file" name="photo" accept="image/*" class="file:hidden bg-gray-700 border border-gray-600 text-white rounded px-4 py-2">
-            <button type="submit" class="col-span-1 md:col-span-2 mt-4 bg-violet-700 text-white rounded px-4 py-2 hover:bg-violet-800">Ajouter le produit</button>
+            <textarea name="description" placeholder="Description" class="textarea"></textarea>
+            <input type="file" name="photo" accept="image/*" class="input-file">
+            <button type="submit" class="btn-primary btn-block">Ajouter le produit</button>
         </form>
 
-        <!-- Liste des produits -->
-        <div class="overflow-x-auto bg-gray-800 rounded-lg shadow border border-gray-700">
-            <table class="min-w-full text-sm">
-                <thead class="bg-gray-700 text-left text-gray-300">
+        <div class="table-container">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th class="px-4 py-2">Nom</th>
-                        <th class="px-4 py-2">Quantité</th>
-                        <th class="px-4 py-2">Prix</th>
-                        <th class="px-4 py-2">Code Barre</th>
-                        <th class="px-4 py-2">Fournisseur</th>
-                        <th class="px-4 py-2">Catégorie</th>
-                        <th class="px-4 py-2">Actions</th>
+                        <th>Nom</th>
+                        <th>Quantité</th>
+                        <th>Prix</th>
+                        <th>Code Barre</th>
+                        <th>Fournisseur</th>
+                        <th>Catégorie</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($produits as $produit): ?>
-                        <tr class="border-t border-gray-700 hover:bg-gray-700">
-                            <td class="px-4 py-2"><?= htmlspecialchars($produit['nom']) ?></td>
-                            <td class="px-4 py-2"><?= htmlspecialchars($produit['quantite']) ?></td>
-                            <td class="px-4 py-2"><?= htmlspecialchars($produit['prix']) ?> CFA</td>
-                            <td class="px-4 py-2"><?= htmlspecialchars($produit['code_barre']) ?></td>
-                            <td class="px-4 py-2"><?= htmlspecialchars($produit['fournisseur_nom']) ?></td>
-                            <td class="px-4 py-2"><?= htmlspecialchars($produit['categorie_nom']) ?></td>
-                            <td class="px-4 py-2 flex flex-col gap-2">
-                                <a href="product_details.php?id=<?= $produit['id'] ?>" class="text-sm text-blue-400 hover:underline">Détails</a>
-                                <form method="POST" action="delete_product.php?page=<?= $page ?>">
+                        <tr>
+                            <td><?= htmlspecialchars($produit['nom']) ?></td>
+                            <td><?= htmlspecialchars($produit['quantite']) ?></td>
+                            <td><?= htmlspecialchars($produit['prix']) ?> CFA</td>
+                            <td><?= htmlspecialchars($produit['code_barre']) ?></td>
+                            <td><?= htmlspecialchars($produit['fournisseur']) ?></td>
+                            <td><?= htmlspecialchars($produit['categorie']) ?></td>
+                            <td>
+                                <a href="product_details.php?id=<?= $produit['id'] ?>" class="link-details">Détails</a>
+                                <form method="POST" action="delete_product.php?page=<?= $page ?>" class="form-inline">
                                     <input type="hidden" name="id" value="<?= $produit['id'] ?>">
-                                    <button type="submit" class="text-sm text-red-400 hover:underline">Supprimer</button>
+                                    <button type="submit" class="link-delete">Supprimer</button>
                                 </form>
                             </td>
                         </tr>
@@ -136,9 +134,9 @@
             </table>
         </div>
 
-        <div class="mt-6 flex justify-center gap-2">
+        <div class="pagination">
             <?php for ($i = 1; $i <= $pages; $i++): ?>
-                <a href="?page=<?= $i ?>&fournisseur=<?= $filter_supplier ?>" class="px-3 py-1 rounded text-sm border <?= $i == $page ? 'bg-violet-700 text-white border-violet-700' : 'bg-gray-800 text-violet-400 border-gray-600 hover:bg-gray-700' ?>">
+                <a href="?page=<?= $i ?>&fournisseur=<?= urlencode($filter_supplier) ?>&search=<?= urlencode($search) ?>" class="pagination-link <?= $i == $page ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>

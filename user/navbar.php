@@ -1,11 +1,12 @@
 <?php
-include '../connection.php';
+include ("../verify.php");
 ?>
 <nav class="navbar">
     <div class="navbar-left">
         <a href="index.php" class="brand">EasyStock</a>
     </div>
     <div class="navbar-right">
+        <a href="index.php" class="nav-link">Acceuil</a>
         <a href="panier.php" class="nav-link">Panier</a>
         <a href="profil.php" class="nav-link profile-link">
             <?php

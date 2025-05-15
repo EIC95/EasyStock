@@ -1,13 +1,13 @@
 <?php
-session_start();
-include("../connection.php");
+
+include ("../verify.php");
 
 $commandeId = $_GET['id'] ?? null;
 if (!$commandeId) {
     die("Commande introuvable.");
 }
 
-// Fetch order details
+
 $stmt = $conn->prepare("
     SELECT c.id, c.date_commande, u.nom AS user_nom, u.prenom AS user_prenom, u.login AS user_login, u.adresse, u.tel
     FROM commandes c
@@ -21,7 +21,7 @@ if (!$commande) {
     die("Commande non trouvée ou non livrée.");
 }
 
-// Fetch products in the order
+
 $stmt = $conn->prepare("
     SELECT p.nom, pc.quantite, pc.prix_total 
     FROM produits_commandes pc 
@@ -31,7 +31,7 @@ $stmt = $conn->prepare("
 $stmt->execute([$commandeId]);
 $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Calcul du total
+
 $total = 0;
 foreach ($produits as $produit) {
     $total += $produit['prix_total'];
@@ -43,17 +43,85 @@ foreach ($produits as $produit) {
 <head>
     <meta charset="UTF-8">
     <title>Facture #<?= htmlspecialchars($commande['id']) ?></title>
+    <link rel="stylesheet" href="adminStyle.css">
     <style>
-        body { font-family: Arial, sans-serif; background: #fff; color: #222; margin: 0; padding: 0; }
-        .facture-container { max-width: 700px; margin: 30px auto; background: #f9f9f9; border: 1px solid #ddd; padding: 32px; border-radius: 8px; }
-        h1 { color: #7c3aed; }
-        .info, .total { margin-bottom: 24px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-        th, td { border: 1px solid #ccc; padding: 8px 12px; }
-        th { background: #eee; }
-        .total { font-size: 1.2em; font-weight: bold; }
-        .print-btn { display: inline-block; margin-bottom: 24px; padding: 8px 24px; background: #7c3aed; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-        @media print { .print-btn { display: none; } }
+        .facture-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            color: #222;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px #0002;
+            padding: 40px 36px 32px 36px;
+            font-size: 1.05rem;
+        }
+        .facture-container h1 {
+            color: #7c3aed;
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 2.2rem;
+        }
+        .facture-container .info {
+            margin-bottom: 32px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 18px 22px;
+            font-size: 1.08em;
+            line-height: 1.7;
+        }
+        .facture-container table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 28px;
+        }
+        .facture-container th, .facture-container td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 14px 10px;
+            text-align: left;
+        }
+        .facture-container th {
+            background: #ede9fe;
+            color: #7c3aed;
+            font-size: 1.08em;
+        }
+        .facture-container tr:last-child td {
+            border-bottom: none;
+        }
+        .facture-container .total {
+            text-align: right;
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #7c3aed;
+            margin-top: 18px;
+        }
+        .print-btn {
+            display: inline-block;
+            margin-bottom: 18px;
+            background: #7c3aed;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 28px;
+            font-size: 1.08em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .print-btn:hover {
+            background: #6d28d9;
+        }
+        @media print {
+            .print-btn {
+                display: none !important;
+            }
+            body {
+                background: #fff !important;
+            }
+            .facture-container {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 0 0 0 !important;
+            }
+        }
     </style>
 </head>
 <body>

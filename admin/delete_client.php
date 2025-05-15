@@ -1,8 +1,8 @@
 <?php
-    session_start();
+    include ("../verify.php");
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['client_id'])) {
-        include("../connection.php");
+        
 
         $client_id = (int) $_POST['client_id'];
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

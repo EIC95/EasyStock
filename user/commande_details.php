@@ -1,12 +1,32 @@
 <?php
-session_start();
-require_once "../verify.php";
-include '../connection.php';
+
+include ("../verify.php");
+
 
 $userId = $_SESSION['user_id'];
 $commandeId = $_GET['id'];
 
-// Fetch order details
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['annuler_commande'])) {
+    // Remettre à jour les quantités des produits de la commande
+    $stmt = $conn->prepare("SELECT produit_id, quantite FROM produits_commandes WHERE commande_id = ?");
+    $stmt->execute([$commandeId]);
+    $produits_commande = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($produits_commande as $item) {
+        $stmt_update = $conn->prepare("UPDATE produits SET quantite = quantite + :qte WHERE id = :pid");
+        $stmt_update->bindValue(':qte', $item['quantite'], PDO::PARAM_INT);
+        $stmt_update->bindValue(':pid', $item['produit_id'], PDO::PARAM_INT);
+        $stmt_update->execute();
+    }
+
+    $stmt = $conn->prepare("UPDATE commandes SET etat = 'Annulée' WHERE id = ? AND user_id = ?");
+    $stmt->execute([$commandeId, $userId]);
+    header("Location: panier.php");
+    exit;
+}
+
+
 $stmt = $conn->prepare("
     SELECT c.id, c.date_commande 
     FROM commandes c 
@@ -20,7 +40,7 @@ if (!$commande) {
     exit;
 }
 
-// Fetch products in the order
+
 $stmt = $conn->prepare("
     SELECT p.nom, p.photo, pc.quantite, pc.prix_total 
     FROM produits_commandes pc 
@@ -36,7 +56,7 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Détails de la commande</title>
-    <link rel="stylesheet" href="user-style.css">
+    <link rel="stylesheet" href="userStyle.css">
 </head>
 <body>
     <?php include 'navbar.php'; ?>
@@ -75,6 +95,18 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="actions">
             <a href="panier.php" class="back-button">Retour au panier</a>
+            <?php
+            
+            $stmt = $conn->prepare("SELECT etat FROM commandes WHERE id = ? AND user_id = ?");
+            $stmt->execute([$commandeId, $userId]);
+            $etat = $stmt->fetchColumn();
+            if ($etat !== 'Annulée' && $etat !== 'Livrée') : ?>
+                <form method="POST" style="display:inline;">
+                    <button type="submit" name="annuler_commande" class="delete-button" onclick="return confirm('Voulez-vous vraiment annuler cette commande ?');">
+                        Annuler la commande
+                    </button>
+                </form>
+            <?php endif; ?>
         </div>
     </main>
 </body>

@@ -1,11 +1,11 @@
 <?php
-session_start();
-include("../connection.php");
+
+include ("../verify.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $id = (int)$_POST['id'];
 
-    // Delete the category
+    
     $stmt = $conn->prepare("DELETE FROM categories WHERE id = ?");
     $stmt->execute([$id]);
 }

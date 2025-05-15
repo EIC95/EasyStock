@@ -1,7 +1,5 @@
 <?php
-session_start();
-
-include("../connection.php");
+include ("../verify.php");
 
 $errors = [];
 

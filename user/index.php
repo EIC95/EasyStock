@@ -1,14 +1,14 @@
 <?php
-session_start();
-require_once "../verify.php";
-include '../connection.php';
 
-// Pagination setup
-$itemsPerPage = 8;
+include ("../verify.php");
+
+
+
+$itemsPerPage = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $itemsPerPage;
 
-// Search and filter
+
 $search = $_GET['search'] ?? '';
 $categorie = $_GET['categorie'] ?? '';
 
@@ -39,7 +39,7 @@ $produits = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Boutique</title>
-    <link rel="stylesheet" href="user-style.css">
+    <link rel="stylesheet" href="userStyle.css">
 </head>
 <body>
     <?php include 'navbar.php'; ?>
@@ -47,7 +47,7 @@ $produits = $stmt->fetchAll();
     <main>
         <h1>Nos produits</h1>
 
-        <!-- Search and filter form -->
+        
         <form method="GET">
             <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Rechercher un produit...">
             <button type="submit" name="action" value="search">Rechercher</button>
@@ -64,20 +64,19 @@ $produits = $stmt->fetchAll();
             <button type="submit" name="action" value="filter">Filtrer</button>
         </form>
 
-        <!-- Product listing -->
-        <div>
+        
+        <div class="products">
             <?php foreach ($produits as $produit): ?>
                 <div class="card">
                     <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>">
                     <h2><?= htmlspecialchars($produit['nom']) ?></h2>
-                    <p><?= htmlspecialchars($produit['description']) ?></p>
                     <p class="price"><?= number_format($produit['prix']) ?> CFA</p>
                     <a href="produit_details.php?id=<?= $produit['id'] ?>">Voir détails</a>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination -->
+        
         <div class="pagination">
             <?php for ($i = 1; $i <= ceil($totalItems / $itemsPerPage); $i++): ?>
                 <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&categorie=<?= urlencode($categorie) ?>"
