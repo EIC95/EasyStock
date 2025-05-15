@@ -26,6 +26,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Vérifier si le login existe déjà pour un utilisateur (role user)
+    if (empty($error)) {
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE login = ? AND role = 'user'");
+        $stmt->execute([$login]);
+        if ($stmt->fetchColumn() > 0) {
+            $error = "Ce login existe déjà pour un utilisateur.";
+        }
+    }
+
     if (empty($error)) {
         try {
             $stmt = $conn->prepare("INSERT INTO users (nom, prenom, login, password, tel, adresse, photo) VALUES (?, ?, ?, ?, ?, ?, ?)");

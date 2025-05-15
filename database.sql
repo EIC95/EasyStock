@@ -32,22 +32,6 @@ CREATE TABLE `categories` (
   `nom` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `categories`
---
-
-INSERT INTO `categories` (`id`, `nom`) VALUES
-(10, 'Accessoires'),
-(11, 'Alimentation'),
-(8, 'Automobile'),
-(5, 'Beauté & Santé'),
-(2, 'Électronique'),
-(7, 'Jeux vidéo'),
-(9, 'Livres'),
-(4, 'Maison & Jardin'),
-(6, 'Sports & Loisirs'),
-(3, 'Vêtements');
-
 -- --------------------------------------------------------
 
 --
@@ -60,16 +44,6 @@ CREATE TABLE `commandes` (
   `date_commande` datetime NOT NULL,
   `etat` varchar(255) NOT NULL DEFAULT 'Non pris en charge'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `commandes`
---
-
-INSERT INTO `commandes` (`id`, `user_id`, `date_commande`, `etat`) VALUES
-(2, 3, '2025-05-11 07:59:19', 'Annulée'),
-(3, 3, '2025-05-12 09:20:26', 'Livrée'),
-(4, 3, '2025-05-15 04:01:13', 'Livrée'),
-(5, 3, '2025-05-15 04:10:11', 'Non pris en charge');
 
 -- --------------------------------------------------------
 
@@ -86,23 +60,6 @@ CREATE TABLE `fournisseurs` (
   `pays` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `fournisseurs`
---
-
-INSERT INTO `fournisseurs` (`id`, `nom`, `tel`, `adresse`, `ville`, `pays`, `email`) VALUES
-(2, 'SénElectro SARL', '77 123 4567', 'Rue 12, Zone Industrielle', 'Dakar', 'Sénégal', 'contact@senelectro.sn'),
-(3, 'Fashion Empire', '+33 1 45 67 89 00', '12 Rue Lafayette', 'Paris', 'France', 'contact@fashionempire.fr'),
-(4, 'Casa Verde', '+34 91 234 5678', 'Calle del Sol 45', 'Madrid', 'Espagne', 'ventas@casaverde.es'),
-(5, 'BelleVie Cosmetics', '70 456 7890', 'Rue des HLM', 'Ziguinchor', 'Sénégal', 'support@bellevie.sn'),
-(6, 'ActiveLife GmbH', '+49 30 123456', 'Sportweg 21', 'Berlin', 'Allemagne', 'info@activelife.de'),
-(7, 'NeoGaming Inc.', '+1 212-555-6789', '5th Avenue, Suite 400', 'New York', 'États-Unis', 'support@neogaming.com'),
-(8, 'AutoPlus Sénégal', '76 789 0123', 'Km 5, Route de Ouakam', 'Dakar', 'Sénégal', 'vente@autoplus.sn'),
-(9, 'Librairie Baobab', '70 890 1234', 'Rue de la Culture', 'Kaolack', 'Sénégal', 'contact@baobabbooks.sn'),
-(10, 'TokyoTrends Co.', '+81 3-1234-5678', 'Shibuya-ku, 1-2-3', 'Tokyo', 'Japon', 'info@tokyotrends.jp'),
-(11, 'Teranga Market', '78 012 3456', 'Rue du Marché Central', 'Touba', 'Sénégal', 'support@terangamarket.sn'),
-(12, 'Nestle', '77 777 77 77', 'Pikine Cite Lobatt Fall', 'Dakar', 'Senegal', 'nestle@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -136,24 +93,6 @@ CREATE TABLE `produits` (
   `date_ajout` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `produits`
---
-
-INSERT INTO `produits` (`id`, `nom`, `categorie`, `quantite`, `prix`, `code_barre`, `fournisseur`, `description`, `photo`, `date_ajout`) VALUES
-(1, 'Samsung Galaxy A54 5G', 'Électronique', 40, 299000, '8806094903006', 'SénElectro SARL', 'Smartphone milieu de gamme avec écran AMOLED 120Hz et triple capteur photo.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(2, 'Nike Air Force 1 Low', 'Accessoires', 99, 85000, '0019328723435', 'Fashion Empire', 'Sneakers emblématiques en cuir blanc, confort et style.', '../uploads/produits/prod_68255c3e0269d0.86111931.jpg', '2025-05-11 07:54:43'),
-(3, 'Kärcher K2 Power Control', 'Maison & Jardin', 30, 125000, '4054278785605', 'Casa Verde', 'Nettoyeur haute pression idéal pour terrasses et véhicules.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(4, 'NIVEA Crème Douceur 250ml', 'Beauté & Santé', 150, 2500, '4005808721877', 'BelleVie Cosmetics', 'Crème hydratante pour tous types de peau, usage quotidien.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(5, 'Adidas Tiro 23 Training Pants', 'Sports & Loisirs', 60, 45000, '4065423790176', 'ActiveLife GmbH', 'Pantalon de sport respirant, coupe slim avec zips aux chevilles.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(6, 'PlayStation 5', 'Jeux vidéo', 20, 550000, '0711719541010', 'NeoGaming Inc.', 'Console de jeu nouvelle génération avec SSD ultra-rapide.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(7, 'Total Quartz 9000 5W40 - 5L', 'Automobile', 70, 27000, '3425901101713', 'AutoPlus Sénégal', 'Huile moteur synthétique hautes performances pour moteurs exigeants.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(8, 'L\'Étranger - Albert Camus', 'Livres', 120, 3500, '9782070360024', 'Librairie Baobab', 'Œuvre majeure de la littérature française, introspection et absurdité.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(9, 'Casque JBL Tune 510BT', 'Accessoires', 90, 35000, '6925281988316', 'TokyoTrends Co.', 'Casque sans fil Bluetooth avec basses puissantes et autonomie de 40h.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(10, 'Riz Royal Umbrella Thaï 25kg', 'Alimentation', 100, 23000, '8851026010257', 'Teranga Market', 'Riz parfumé thaïlandais premium, idéal pour la cuisine sénégalaise.', '../uploads/produits/default.svg', '2025-05-11 07:54:43'),
-(12, 'Victus by HP Gaming Laptop 15z-fb200, 15.6\"', 'Électronique', 1, 799000, '0019328546735', 'NeoGaming Inc.', 'Windows 11 HomeAMD Ryzen™ 5 8645HS (up to 5.0 GHz, 16 MB L3 cache, 6 cores, 12 threads) + NVIDIA® GeForce RTX™ 3050 Laptop GPU (6 GB)8 GB DDR5-5600 MHz RAM (1 x 8 GB)512 GB PCIe® NVMe™ TLC M.2 SSD (4x4 SSD)', '../uploads/produits/prod_68255e7e814c21.02988491.webp', '2025-05-15 03:24:46');
-
--- --------------------------------------------------------
 
 --
 -- Structure de la table `produits_commandes`
@@ -167,16 +106,6 @@ CREATE TABLE `produits_commandes` (
   `prix_total` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `produits_commandes`
---
-
-INSERT INTO `produits_commandes` (`id`, `commande_id`, `produit_id`, `quantite`, `prix_total`, `created_at`) VALUES
-(1, 2, 1, 1, 299000, '2025-05-11 07:59:19'),
-(2, 3, 1, 1, 299000, '2025-05-12 09:20:26'),
-(3, 4, 12, 1, 799000, '2025-05-15 04:01:13'),
-(4, 5, 2, 1, 85000, '2025-05-15 04:10:11');
 
 -- --------------------------------------------------------
 
@@ -195,14 +124,6 @@ CREATE TABLE `users` (
   `photo` varchar(255) DEFAULT NULL,
   `role` enum('user','admin') DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `users`
---
-
-INSERT INTO `users` (`id`, `nom`, `prenom`, `login`, `password`, `tel`, `adresse`, `photo`, `role`) VALUES
-(2, 'Ibrahima', 'Cissé', 'eic', '$2y$10$1sgYasC7PaFIVxSEEpRCgOyMrZr0RP1sroWNngmrk.dwUjUCr1/hq', '77 777 77 77', 'Pikine Cite Lobatt Fall', '../uploads/profile/default.svg', 'admin'),
-(3, 'Lo', 'Cheikh', 'dtb', '$2y$10$rPMJwkvRjKSg1UmFCRY59.Eajju6tcUgAfe/PGXtQ9OkSW6qY9Sju', '77 777 77 77', 'Pikine', '../uploads/profile/default.svg', 'user');
 
 --
 -- Index pour les tables déchargées

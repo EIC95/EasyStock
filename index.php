@@ -7,10 +7,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $login = trim($_POST['login']);
     $password = trim($_POST['password']);
+    $role = isset($_POST['role']) ? $_POST['role'] : 'user';
 
     try {
-        $stmt = $conn->prepare("SELECT * FROM users WHERE login = ?");
-        $stmt->execute([$login]);
+        $stmt = $conn->prepare("SELECT * FROM users WHERE login = ? AND role = ?");
+        $stmt->execute([$login, $role]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
@@ -24,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit;
         } else {
-            $error = "Login ou mot de passe incorrect";
+            $error = "Login, mot de passe ou rôle incorrect";
         }
     } catch (Exception $e) {
         $error = "Erreur : " . $e->getMessage();
@@ -58,6 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div>
                 <label for="password">Mot de passe</label>
                 <input type="password" name="password" id="password" required>
+            </div>
+            <div>
+                <label for="role">Rôle</label>
+                <select name="role" id="role" required>
+                    <option value="user">Utilisateur</option>
+                    <option value="admin">Administrateur</option>
+                </select>
             </div>
             <button type="submit">Se connecter</button>
         </form>
